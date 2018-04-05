@@ -9,7 +9,7 @@ load(file = "data/data.Rdata")
 View(d)
 
 # パッケージ読込 -----------------------------------------------------------------
-library(tidyverse); library(rstan)
+library(tidyverse); library(rstan); library(ggmcmc)
 
 ## stanのおまじない
 options(mc.cores = parallel::detectCores())
@@ -29,7 +29,14 @@ stanmodel1 <- stan_model(file="docs/iwanamiDS1_chap1_model1.stan")
 
 fit1 <-
   sampling(stanmodel1,
-       data=d,
-       iter=1000, warmup=200, seed=1)
+       data = data,
+       iter = 1000, warmup = 200, seed = 1)
 
 save.image()
+
+
+# 可視化 ---------------------------------------------------------------------
+
+fit1 %>% summary() %>% .$summary
+fit1 %>% plot()
+fit1 %>% ggs() %>% ggmcmc()
